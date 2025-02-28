@@ -1,0 +1,108 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+
+  .google-container {
+    width: 448px;
+    padding: 48px 40px 36px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    text-align: center;
+
+    .google-logo {
+      margin-bottom: 24px;
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: -2px;
+
+      span {
+        display: inline-block;
+        &.google-blue { color: #4285f4; }
+        &.google-red { color: #ea4335; }
+        &.google-yellow { color: #fbbc05; }
+        &.google-green { color: #34a853; }
+      }
+    }
+
+    .signin-heading {
+      font-size: 24px;
+      font-weight: 400;
+      margin: 16px 0 8px;
+      color: #202124;
+    }
+
+    .signin-subtitle {
+      color: #5f6368;
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    .google-signin-button {
+      width: 100%;
+      height: 44px;
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      padding: 0 12px;
+      margin: 16px 0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #d2e3fc;
+      }
+
+      .button-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #3c4043;
+        font-size: 14px;
+        font-weight: 500;
+
+        .google-icon {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #dadce0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .language-select {
+        border: none;
+        background: none;
+        color: #5f6368;
+        font-size: 12px;
+        padding: 8px;
+        cursor: pointer;
+      }
+
+      .links {
+        display: flex;
+        gap: 16px;
+
+        a {
+          color: #5f6368;
+          text-decoration: none;
+          font-size: 12px;
+          &:hover {
+            color: #1a73e8;
+          }
+        }
+      }
+    }
+  }
+}

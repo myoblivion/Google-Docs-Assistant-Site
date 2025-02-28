@@ -1,0 +1,11 @@
+// Variables
+$primary-color: #4caf50;
+$text-color: #333;
+$background-color: #f9f9f9;
+
+// Mixin for Flexbox
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

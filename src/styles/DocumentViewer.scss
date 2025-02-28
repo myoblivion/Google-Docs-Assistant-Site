@@ -1,0 +1,1114 @@
+.document-viewer-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .docs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    height: 64px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .menu-button {
+        color: #5f6368;
+      }
+
+      .title-container {
+        .document-title {
+          font-family: "Google Sans", Roboto, Arial;
+          font-size: 18px;
+          font-weight: 500;
+          color: #3c4043;
+          margin: 0;
+          padding: 4px 12px;
+          border-radius: 4px;
+          &:hover {
+            background: rgba(0, 0, 0, 0.04);
+          }
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      .MuiIconButton-root {
+        color: #5f6368;
+        padding: 8px;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+        }
+      }
+    }
+  }
+// Add overlay container styles in your CSS:
+.iframe-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+}
+/* Add these styles to your CSS file */
+.docs-message-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  line-height: 1.5;
+}
+
+.docs-heading {
+  margin: 8px 0;
+  font-weight: 600;
+}
+
+.docs-heading.primary {
+  font-size: 1.4em;
+  color: #1a73e8;
+}
+
+.docs-heading.secondary {
+  font-size: 1.2em;
+  color: #202124;
+}
+
+.docs-paragraph {
+  margin: 6px 0;
+  white-space: pre-wrap;
+}
+
+.docs-list {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.docs-list-item {
+  margin: 4px 0;
+  list-style-type: disc;
+}
+.apply-popup {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  padding: 16px;
+}
+
+.apply-options button {
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.apply-options button:hover {
+  background-color: #f8f9fa;
+}
+
+.message-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.docs-message-bubble:hover .message-actions {
+  opacity: 1;
+}
+strong {
+  font-weight: 600;
+  color: #1a73e8;
+}
+// .error-highlight {
+//   position: absolute;
+//   background-color: rgba(255,0,0,0.2);
+//   border-bottom: 2px dashed red;
+//   pointer-events: auto;
+//   z-index: 9999;
+// }
+  .main-content {
+    flex: 1;
+    position: relative;
+    background: #f8f9fa;
+    margin-left: 0 !important;
+  }
+  // Add this CSS
+  .grammar-highlight:hover {
+    background: rgba(255, 0, 0, 0.15) !important;
+  }
+  .google-docs-iframe {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: calc(100vh - 69px);
+    border: none;
+    background: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .side-panel {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 360px;
+    height: calc(100vh - 64px);
+    background: white;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-left: 1px solid #dadce0;
+
+    &.chat-panel {
+      z-index: 1001;
+    }
+  }
+}
+
+// Comments Panel Styling
+.comments-panel {
+  font-family: "Roboto", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #dadce0;
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #3c4043;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #5f6368;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .comments-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .comment-thread {
+    margin-bottom: 16px;
+    background: #fff;
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a73e8;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+
+    &.small {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+    }
+  }
+
+  .comment-meta {
+    margin-left: 12px;
+
+    .author-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #3c4043;
+    }
+
+    .comment-time {
+      font-size: 12px;
+      color: #5f6368;
+      margin-left: 8px;
+    }
+  }
+
+  .comment-content {
+    font-size: 13px;
+    color: #3c4043;
+    line-height: 1.5;
+    margin-left: 44px;
+    padding: 4px 0;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .comment-actions {
+    margin-left: 44px;
+    margin-top: 8px;
+
+    button {
+      background: none;
+      border: none;
+      color: #1a73e8;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:hover {
+        background: rgba(26, 115, 232, 0.04);
+      }
+    }
+  }
+
+  .reply-input {
+    margin-left: 44px;
+    margin-top: 8px;
+
+    textarea {
+      width: 100%;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 13px;
+      min-height: 72px;
+      resize: vertical;
+
+      &:focus {
+        outline: none;
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 1px #1a73e8;
+      }
+    }
+  }
+
+  .reply-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+
+    button {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .cancel-reply {
+      background: none;
+      border: none;
+      color: #5f6368;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+    }
+
+    .post-reply {
+      background: #1a73e8;
+      color: white;
+      border: none;
+
+      &:hover {
+        background: #1557b0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+
+  .replies-list {
+    margin-left: 24px;
+    border-left: 2px solid #dadce0;
+    padding-left: 16px;
+    margin-top: 12px;
+  }
+
+  .new-comment {
+    border-top: 1px solid #dadce0;
+    padding: 16px;
+
+    .comment-input {
+      flex: 1;
+      margin-left: 12px;
+
+      textarea {
+        width: 100%;
+        border: 1px solid #dadce0;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-size: 13px;
+        min-height: 40px;
+        resize: none;
+
+        &:focus {
+          outline: none;
+          border-color: #1a73e8;
+          box-shadow: 0 0 0 1px #1a73e8;
+        }
+      }
+    }
+
+    .comment-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+
+      .post-comment {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        padding: 6px 24px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &:disabled {
+          background: rgba(0, 0, 0, 0.12);
+          color: rgba(0, 0, 0, 0.26);
+          cursor: default;
+        }
+
+        &:hover:not(:disabled) {
+          background: #1557b0;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Chat Panel Styling
+.google-style-chat-panel {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-left: 1px solid #dadce0;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.docs-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #dadce0;
+  background: #f8f9fa;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .google-docs-icon {
+      display: flex;
+      align-items: center;
+      padding: 4px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #3c4043;
+      letter-spacing: 0.25px;
+    }
+  }
+
+  .google-close-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.docs-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.docs-message {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  &.user {
+    flex-direction: row-reverse;
+
+    .docs-message-bubble {
+      background: #e8f0fe;
+      border-radius: 16px 16px 4px 16px;
+    }
+  }
+
+  .bot-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f1f3f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .docs-message-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 16px 16px 16px 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    .message-content {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #3c4043;
+    }
+
+    .docs-message-time {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #5f6368;
+      text-align: right;
+    }
+  }
+}
+
+.docs-chat-input {
+  border-top: 1px solid #dadce0;
+  padding: 16px;
+
+  .input-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .google-input-style {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #3c4043;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 1px #1a73e8;
+      }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 4px;
+    }
+
+    .google-icon-btn {
+      background: none;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.google-loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: #dadce0;
+    border-radius: 50%;
+    animation: google-dot-bounce 1.4s infinite ease-in-out;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes google-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+}
+
+.dot-flashing {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #ccc;
+  color: #ccc;
+  animation: dotFlashing 1s infinite linear;
+  margin-left: 8px;
+  display: inline-block;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #ccc;
+  color: #ccc;
+  animation: dotFlashing 1s infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #ccc;
+  color: #ccc;
+  animation: dotFlashing 1s infinite linear;
+  animation-delay: 0.2s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: #ccc;
+  }
+  50%,
+  100% {
+    background-color: rgba(204, 204, 204, 0.2);
+  }
+}
+
+/* Prompts Popup Styling */
+.google-prompts-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    transition: transform 0.2s;
+  }
+
+  &.active svg {
+    transform: rotate(15deg);
+  }
+}
+.prompts-popup {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dadce0;
+  z-index: 1000;
+}
+
+.prompts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #dadce0;
+
+  h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3c4043;
+  }
+}
+
+.prompts-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.prompt-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.prompt-text {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #1a73e8;
+  cursor: pointer;
+  padding: 4px 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.add-prompt-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #dadce0;
+
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Add to existing button styles */
+.google-icon-btn.small {
+  padding: 4px;
+  font-size: 18px;
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.reference-highlight {
+  position: absolute;
+  background: rgba(255, 235, 59, 0.3);
+  border-bottom: 2px solid #fbc02d;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reference-badge {
+  position: absolute;
+  background: #fbc02d;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  bottom: 100%;
+  left: 0;
+}
+
+.reference-popup {
+  position: fixed;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+}
+span.ner-popup-trigger {
+  padding-top: 52%;
+}
+img.image-logo {
+  width: 10%;
+}
+ul {
+  list-style: none;
+}
+// Popup trigger in header
+.ner-popup-trigger {
+  position: relative;
+  .entity-count-badge {
+    position: absolute;
+    top: 5px;
+    right: -8px;
+    background: #2196f3;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.ner-trigger {
+  color: #4a148c; // Purple accent for analysis
+  &:hover {
+    background-color: #f3e5f5;
+  }
+
+  .entity-count-badge {
+    background: #9c27b0;
+    font-weight: bold;
+  }
+}
+.renumber-button {
+  position: relative;
+
+  .button-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3f51b5;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+.entity-type-badge {
+  &.study_design {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.methodology {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  &.intervention {
+    background: #f3e5f5;
+    color: #9c27b0;
+  }
+  &.outcome {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+  &.population {
+    background: #fbe9e7;
+    color: #d32f2f;
+  }
+  &.analysis_type {
+    background: #e0f7fa;
+    color: #0097a7;
+  }
+}
+// Popup modal styles
+.ner-popup-modal {
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 1rem;
+  }
+
+  .entity-popup-content {
+    max-height: 70vh;
+    padding: 1rem;
+
+    .no-entities-message {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      button {
+        margin-top: 2%;
+        padding: 1%;
+        border: none;
+        cursor: pointer;
+        background-color: #dd405b;
+        color: white;
+      }
+    }
+  }
+
+  .entity-grid-popup {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .entity-card-popup {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .entity-header-popup {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .entity-type-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+
+    &.study_design {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    &.methodology {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+    &.intervention {
+      background: #f3e5f5;
+      color: #9c27b0;
+    }
+    // Add other type styles
+  }
+
+  .confidence-meter {
+    width: 80px;
+    height: 20px;
+    background: #eee;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6b6b, #ff9f43);
+      transition: width 0.3s ease;
+    }
+
+    .confidence-percent {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .intervention-info-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #e9ecef;
+    }
+  }
+}
+.error-highlight {
+  pointer-events: none;
+  position: absolute;
+}
+.grammar-error {
+  position: relative;
+  cursor: pointer;
+}
+
+.grammar-popup {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.category-badge {
+  float: right;
+  background: #e0e0e0;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+.grammar-error-highlight {
+  position: absolute;
+  background: rgba(255, 215, 0, 0.3);
+  border-bottom: 2px solid #ffd700;
+  cursor: pointer;
+  z-index: 10000;
+  pointer-events: auto;
+  transition: all 0.2s;
+  mix-blend-mode: multiply;
+
+  &:hover {
+    background: rgba(255, 215, 0, 0.5);
+    z-index: 10001;
+  }
+}
+
+.grammar-suggestion-popup {
+  position: fixed;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10002;
+  padding: 12px;
+  max-width: 300px;
+  transform: translateY(5px);
+
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #666;
+      
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+
+  .suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .suggestion-item {
+      padding: 6px 12px;
+      text-align: left;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: #e9ecef;
+        transform: translateX(2px);
+      }
+    }
+  }
+}
