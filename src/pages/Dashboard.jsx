@@ -320,12 +320,11 @@ const Dashboard = () => {
 
             {showUserMenu && (
               <div className="google-user-menu">
-                <div className="user-info">
+                {/* <div className="user-info">
                   <div className="user-name">{user?.name || "User"}</div>
                   <div className="user-email">{user?.email || "No email"}</div>
-                </div>
+                </div> */}
 
-                <div className="menu-divider"></div>
 
                 <button className="menu-item" onClick={handleLogout}>
                   <span className="material-icons">logout</span>
