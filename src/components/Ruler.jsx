@@ -1,87 +1,46 @@
-import React, { useEffect, useRef, useState } from "react";
-
-const Ruler = ({ type, width, height, paddingLeft, paddingTop }) => {
-  const rulerRef = useRef(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const updateScale = () => {
-      const zoomLevel = window.devicePixelRatio || 1;
-      setScale(zoomLevel);
-    };
-
-    window.addEventListener("resize", updateScale);
-    updateScale();
-
-    return () => window.removeEventListener("resize", updateScale);
-  }, []);
-
-  const renderTicks = () => {
-    const ticks = [];
-    const tickSize = type === "horizontal" ? width : height;
-    const tickInterval = 50; // 50px per tick
-    const totalTicks = Math.floor(tickSize / tickInterval);
-
-    for (let i = 0; i <= totalTicks; i++) {
-      const position = i * tickInterval;
-      const isMajorTick = i % 2 === 0;
-
-      if (type === "horizontal") {
-        ticks.push(
-          <div
-            key={`h-tick-${i}`}
-            className="tick"
-            style={{
-              left: `${position}px`,
-              height: isMajorTick ? "15px" : "10px",
-              borderLeft: "1px solid #ccc",
-            }}
-          >
-            {isMajorTick && (
-              <span className="tick-label" style={{ left: `${position + 4}px` }}>
-                {position}
-              </span>
-            )}
-          </div>
-        );
-      } else {
-        ticks.push(
-          <div
-            key={`v-tick-${i}`}
-            className="tick"
-            style={{
-              top: `${position}px`,
-              width: isMajorTick ? "15px" : "10px",
-              borderTop: "1px solid #ccc",
-            }}
-          >
-            {isMajorTick && (
-              <span className="tick-label" style={{ top: `${position + 4}px` }}>
-                {position}
-              </span>
-            )}
-          </div>
-        );
+const handleProcessCitation = async () => {
+  try {
+    const response = await axios.post(
+      "https://5171-13-53-131-146.ngrok-free.app/process-citation",
+      {
+        input: citationInput,
+        document_id: id,
+        style: citationStyle,
       }
-    }
+    );
 
-    return ticks;
-  };
-
-  return (
-    <div
-      ref={rulerRef}
-      className={`ruler ${type}`}
-      style={{
-        width: type === "horizontal" ? `${width}px` : "30px",
-        height: type === "vertical" ? `${height}px` : "30px",
-        paddingLeft: type === "horizontal" ? `${paddingLeft}px` : 0,
-        paddingTop: type === "vertical" ? `${paddingTop}px` : 0,
-      }}
-    >
-      {renderTicks()}
-    </div>
-  );
+    setCitationResult(response.data);
+    setErrorMessage(null);
+  } catch (error) {
+    setCitationResult(null);
+    setErrorMessage(
+      error.response?.data?.detail || "Failed to generate citation. Please check your input."
+    );
+  }
 };
 
-export default Ruler;
+const handleInsertCitation = async () => {
+  try {
+    // Get current document content
+    const text = await getDocumentText();
+    
+    // Create update requests
+    const requests = [{
+      insertText: {
+        text: ` ${citationResult.formatted}`,
+        endOfSegmentLocation: { segmentId: "" }, // Appends to end of document
+      }
+    }];
+
+    await axios.patch(
+      `https://docs.googleapis.com/v1/documents/${id}`,
+      { requests },
+      { headers: { Authorization: `Bearer ${user.token}` } }
+    );
+
+    setShowCitationModal(false);
+    handleDocumentAnalysis(); // Refresh document analysis
+  } catch (error) {
+    setErrorMessage("Failed to insert citation into document");
+  }
+};

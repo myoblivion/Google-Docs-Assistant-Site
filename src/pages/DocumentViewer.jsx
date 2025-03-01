@@ -15,6 +15,12 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import ScienceIcon from "@mui/icons-material/Science";
 import InfoIcon from "@mui/icons-material/Info";
 import AiAssistantLogo from "../../public/ai-logo.png";
+import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import ErrorIcon from "@mui/material/Button";
 
 // Start
 const DocumentViewer = () => {
@@ -31,6 +37,11 @@ const DocumentViewer = () => {
   const [nerResults, setNerResults] = useState([]);
   const [showNERPopup, setShowNERPopup] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [showCitationModal, setShowCitationModal] = useState(false);
+  const [citationInput, setCitationInput] = useState("");
+  const [citationStyle, setCitationStyle] = useState("apa");
+  const [citationResult, setCitationResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleLogout = () => {
     setUser(null);
@@ -66,12 +77,59 @@ const DocumentViewer = () => {
 
   //     const data = await response.json();
 
-
   //   } catch (error) {
   //     console.error("Grammar check failed:", error);
   //   }
   // };
+  const handleProcessCitation = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/process-citation",
+        {
+          input: citationInput,
+          document_id: id,
+          style: citationStyle,
+        }
+      );
 
+      setCitationResult(response.data);
+      setErrorMessage(null);
+    } catch (error) {
+      setCitationResult(null);
+      setErrorMessage(
+        error.response?.data?.detail ||
+          "Failed to generate citation. Please check your input."
+      );
+    }
+  };
+
+  const handleInsertCitation = async () => {
+    try {
+      // Get current document content
+      const text = await getDocumentText();
+
+      // Create update requests
+      const requests = [
+        {
+          insertText: {
+            text: ` ${citationResult.formatted}`,
+            endOfSegmentLocation: { segmentId: "" }, // Appends to end of document
+          },
+        },
+      ];
+
+      await axios.patch(
+        `https://docs.googleapis.com/v1/documents/${id}`,
+        { requests },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+
+      setShowCitationModal(false);
+      handleDocumentAnalysis(); // Refresh document analysis
+    } catch (error) {
+      setErrorMessage("Failed to insert citation into document");
+    }
+  };
   useEffect(() => {
     const handleIframeLoad = () => {
       const iframe = iframeRef.current;
@@ -117,8 +175,6 @@ const DocumentViewer = () => {
   //   }
   // }, [documentInfo]);
 
-
-  
   // Reference management functions
   const autoRenumberReferences = (text) => {
     let counter = 1;
@@ -311,8 +367,8 @@ const DocumentViewer = () => {
 
       // Use allSettled to handle partial successes
       const [refResult, nerResult] = await Promise.allSettled([
-        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-references", payload),
-        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-ner", payload),
+        axios.post("http://127.0.0.1:8000/process-references", payload),
+        axios.post("http://127.0.0.1:8000/process-ner", payload),
       ]);
 
       // Handle reference results
@@ -372,6 +428,14 @@ const DocumentViewer = () => {
         </div>
 
         <div className="header-right">
+          <IconButton
+            onClick={() => setShowCitationModal(true)}
+            title="Add Citation"
+            className="citation-button"
+          >
+            <FormatQuoteIcon />
+          </IconButton>
+
           <IconButton
             onClick={handleRenumberReferences}
             title="Auto-renumber references"
@@ -458,6 +522,87 @@ const DocumentViewer = () => {
         </div>
       </header>
       <div className="main-content">
+        <Dialog
+          open={showCitationModal}
+          onClose={() => setShowCitationModal(false)}
+          maxWidth="md"
+        >
+          <div className="citation-header">
+            <DialogTitle className="citation-header">
+              <span>Generate Citation</span>
+            </DialogTitle>
+            <IconButton onClick={() => setShowCitationModal(false)}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+          <DialogContent dividers>
+            <div className="citation-form">
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Enter URL, DOI, or citation text"
+                value={citationInput}
+                onChange={(e) => setCitationInput(e.target.value)}
+                multiline
+                rows={3}
+              />
+              <div className="citation-controls">
+                <Select
+                  value={citationStyle}
+                  onChange={(e) => setCitationStyle(e.target.value)}
+                  className="style-select"
+                >
+                  <MenuItem value="apa">APA Style</MenuItem>
+                  <MenuItem value="mla">MLA Style</MenuItem>
+                  <MenuItem value="chicago">Chicago Style</MenuItem>
+                </Select>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleProcessCitation}
+                  disabled={!citationInput.trim()}
+                >
+                  Generate Citation
+                </Button>
+              </div>
+
+              {citationResult && (
+                <div className="citation-result">
+                  <div className="formatted-citation">
+                    <label>Formatted Citation:</label>
+                    <div className="citation-text">
+                      {citationResult.formatted}
+                    </div>
+                  </div>
+                  <div className="citation-actions">
+                    <Button
+                      variant="outlined"
+                      onClick={() =>
+                        navigator.clipboard.writeText(citationResult.formatted)
+                      }
+                    >
+                      Copy to Clipboard
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleInsertCitation}
+                    >
+                      Insert in Document
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {errorMessage && (
+                <div className="citation-error">
+                  <ErrorIcon />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
         {references.references?.map((ref, index) => (
           <div
             key={index}

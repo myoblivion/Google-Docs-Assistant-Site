@@ -294,7 +294,7 @@ const ChatPanel = ({ documentId, user, onClose }) => {
       ]);
 
       const response = await fetch(
-        "https://5171-13-53-131-146.ngrok-free.app/chat",
+        "http://127.0.0.1:8000/chat",
         {
           method: "POST",
           headers: {
