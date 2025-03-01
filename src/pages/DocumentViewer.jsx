@@ -84,7 +84,7 @@ const DocumentViewer = () => {
   const handleProcessCitation = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/process-citation",
+        "https://5171-13-53-131-146.ngrok-free.app/process-citation",
         {
           input: citationInput,
           document_id: id,
@@ -367,8 +367,8 @@ const DocumentViewer = () => {
 
       // Use allSettled to handle partial successes
       const [refResult, nerResult] = await Promise.allSettled([
-        axios.post("http://127.0.0.1:8000/process-references", payload),
-        axios.post("http://127.0.0.1:8000/process-ner", payload),
+        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-references", payload),
+        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-ner", payload),
       ]);
 
       // Handle reference results
