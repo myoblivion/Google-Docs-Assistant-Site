@@ -6,11 +6,9 @@ import ChatPanel from "../components/ChatPanel";
 import axios from "axios";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AppsIcon from "@mui/icons-material/Apps";
 import AssistantIcon from "@mui/icons-material/Assistant";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import ScienceIcon from "@mui/icons-material/Science";
 import InfoIcon from "@mui/icons-material/Info";
@@ -42,78 +40,77 @@ const DocumentViewer = () => {
   const [citationStyle, setCitationStyle] = useState("apa");
   const [citationResult, setCitationResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showAuthorDialog, setShowAuthorDialog] = useState(false);
+  const [manualAuthor, setManualAuthor] = useState("");
+  const [detectedStyle, setDetectedStyle] = useState(null);
 
   const handleLogout = () => {
     setUser(null);
     navigate("/");
   };
-  // Add this to your useEffect that handles document analysis
-  // const handleGrammarCheck = async (text) => {
-  //   try {
-  //     const scriptUrl =
-  //       "https://script.google.com/macros/s/AKfycbx4DKa_-ZJgdpq56oU49gySrvDmvVbkiNyPk2CE81395FBrC3Nk4o2kTWZaDijYCIYQGQ/exec";
 
-  //     const response = await fetch(scriptUrl, {
-  //       method: "POST",
-  //       body: new URLSearchParams({
-  //         text: text.replace(/\n/g, "⏎"),
-  //       }),
-  //       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //       redirect: "follow",
-  //     });
+  // Line 112-144: Modify handleProcessCitation
+ // Update handleProcessCitation to force style selection
+const handleProcessCitation = async () => {
+  try {
+    setIsProcessing(true);
+    setErrorMessage(null);
+    setCitationResult(null);
 
-  //     if (!response.ok)
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-
-  //     const contentType = response.headers.get("content-type");
-  //     if (!contentType || !contentType.includes("application/json")) {
-  //       const text = await response.text();
-  //       throw new Error(`Unexpected response format: ${text.slice(0, 100)}`);
-  //     }
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-
-  //   } catch (error) {
-  //     console.error("Grammar check failed:", error);
-  //   }
-  // };
-  const handleProcessCitation = async () => {
-    try {
-      const response = await axios.post(
-        "https://5171-13-53-131-146.ngrok-free.app/process-citation",
-        {
-          input: citationInput,
-          document_id: id,
-          style: citationStyle,
-        }
+    // Always use selected style, only detect if not manually chosen
+    let targetStyle = citationStyle;
+    if (!citationStyle) {
+      const detectionRes = await axios.post(
+        "http://127.0.0.1:8000/detect-style",
+        { text: citationInput }
       );
-
-      setCitationResult(response.data);
-      setErrorMessage(null);
-    } catch (error) {
-      setCitationResult(null);
-      setErrorMessage(
-        error.response?.data?.detail ||
-          "Failed to generate citation. Please check your input."
-      );
+      targetStyle = detectionRes.data.detected_style;
+      setCitationStyle(targetStyle); // Update UI to show detected style
     }
-  };
 
+    const response = await axios.post(
+      "http://localhost:8000/process-citation",
+      {
+        input: citationInput,
+        document_id: id,
+        style: targetStyle, // Force use selected/detected style
+        existing_refs: references,
+      }
+    );
+
+    if (response.data.formatted.toLowerCase().includes("anonymous")) {
+      setErrorMessage("Could not detect author - using Anonymous");
+    }
+
+    setCitationResult(response.data);
+  } catch (error) {
+    setErrorMessage(
+      error.response?.data?.detail || "Citation generation failed"
+    );
+  } finally {
+    setIsProcessing(false);
+  }
+};
+  // Modified handleInsertCitation
   const handleInsertCitation = async () => {
     try {
-      // Get current document content
-      const text = await getDocumentText();
+      const selection = await getDocumentSelection();
 
-      // Create update requests
       const requests = [
         {
           insertText: {
-            text: ` ${citationResult.formatted}`,
-            endOfSegmentLocation: { segmentId: "" }, // Appends to end of document
+            text: `[${citationResult.number}]`,
+            location: {
+              index: selection.endIndex,
+            },
+          },
+        },
+        {
+          insertText: {
+            text: `\n${citationResult.formatted}`,
+            location: {
+              index: selection.referenceSectionStart,
+            },
           },
         },
       ];
@@ -124,10 +121,17 @@ const DocumentViewer = () => {
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
 
-      setShowCitationModal(false);
-      handleDocumentAnalysis(); // Refresh document analysis
+      // Update references state
+      setReferences((prev) => [
+        ...prev,
+        {
+          id: citationResult.id,
+          number: citationResult.number,
+          raw: citationResult.raw_data,
+        },
+      ]);
     } catch (error) {
-      setErrorMessage("Failed to insert citation into document");
+      // Error handling
     }
   };
   useEffect(() => {
@@ -367,8 +371,14 @@ const DocumentViewer = () => {
 
       // Use allSettled to handle partial successes
       const [refResult, nerResult] = await Promise.allSettled([
-        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-references", payload),
-        axios.post("https://5171-13-53-131-146.ngrok-free.app/process-ner", payload),
+        axios.post(
+          "https://5171-13-53-131-146.ngrok-free.app/process-references",
+          payload
+        ),
+        axios.post(
+          "https://5171-13-53-131-146.ngrok-free.app/process-ner",
+          payload
+        ),
       ]);
 
       // Handle reference results
@@ -436,29 +446,6 @@ const DocumentViewer = () => {
             <FormatQuoteIcon />
           </IconButton>
 
-          <IconButton
-            onClick={handleRenumberReferences}
-            title="Auto-renumber references"
-            className="renumber-button"
-          >
-            {isProcessing ? (
-              <div className="button-spinner"></div>
-            ) : (
-              <AutoFixHighIcon />
-            )}
-          </IconButton>
-          <IconButton
-            onClick={() => setShowNERPopup(true)}
-            title="Show research entities"
-            className="ner-trigger"
-          >
-            <span className="ner-popup-trigger">
-              <ScienceIcon fontSize="medium" />
-              {nerResults.length > 0 && (
-                <span className="entity-count-badge">{nerResults.length}</span>
-              )}
-            </span>
-          </IconButton>
           <IconButton onClick={() => setShowChatPanel(!showChatPanel)}>
             <AssistantIcon />
           </IconButton>
@@ -535,6 +522,7 @@ const DocumentViewer = () => {
               <CloseIcon />
             </IconButton>
           </div>
+
           <DialogContent dividers>
             <div className="citation-form">
               <TextField
@@ -552,9 +540,11 @@ const DocumentViewer = () => {
                   onChange={(e) => setCitationStyle(e.target.value)}
                   className="style-select"
                 >
-                  <MenuItem value="apa">APA Style</MenuItem>
-                  <MenuItem value="mla">MLA Style</MenuItem>
-                  <MenuItem value="chicago">Chicago Style</MenuItem>
+                  <MenuItem value="apa">APA</MenuItem>
+                  <MenuItem value="mla">MLA</MenuItem>
+                  <MenuItem value="chicago">Chicago</MenuItem>
+                  <MenuItem value="ieee">IEEE</MenuItem>
+                  <MenuItem value="vancouver">Vancouver</MenuItem>
                 </Select>
                 <Button
                   variant="contained"

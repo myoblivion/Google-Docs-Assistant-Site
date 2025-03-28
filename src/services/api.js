@@ -8,7 +8,6 @@ const API_DOCS = axios.create({
   baseURL: "https://docs.googleapis.com/v1",
 });
 
-// Fetch all Google Docs files
 // In services/api.js update the fetchDocuments function
 export const fetchDocuments = async (token, section = 'my-drive') => {
   try {
