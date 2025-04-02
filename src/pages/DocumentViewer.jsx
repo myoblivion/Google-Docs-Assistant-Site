@@ -19,6 +19,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import ErrorIcon from "@mui/material/Button";
+import GetAppIcon from "@mui/icons-material/GetApp";
 
 // Start
 const DocumentViewer = () => {
@@ -40,9 +41,6 @@ const DocumentViewer = () => {
   const [citationStyle, setCitationStyle] = useState("apa");
   const [citationResult, setCitationResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [showAuthorDialog, setShowAuthorDialog] = useState(false);
-  const [manualAuthor, setManualAuthor] = useState("");
-  const [detectedStyle, setDetectedStyle] = useState(null);
 
   const handleLogout = () => {
     setUser(null);
@@ -50,88 +48,45 @@ const DocumentViewer = () => {
   };
 
   // Line 112-144: Modify handleProcessCitation
- // Update handleProcessCitation to force style selection
-const handleProcessCitation = async () => {
-  try {
-    setIsProcessing(true);
-    setErrorMessage(null);
-    setCitationResult(null);
-
-    // Always use selected style, only detect if not manually chosen
-    let targetStyle = citationStyle;
-    if (!citationStyle) {
-      const detectionRes = await axios.post(
-        "http://127.0.0.1:8000/detect-style",
-        { text: citationInput }
-      );
-      targetStyle = detectionRes.data.detected_style;
-      setCitationStyle(targetStyle); // Update UI to show detected style
-    }
-
-    const response = await axios.post(
-      "http://localhost:8000/process-citation",
-      {
-        input: citationInput,
-        document_id: id,
-        style: targetStyle, // Force use selected/detected style
-        existing_refs: references,
-      }
-    );
-
-    if (response.data.formatted.toLowerCase().includes("anonymous")) {
-      setErrorMessage("Could not detect author - using Anonymous");
-    }
-
-    setCitationResult(response.data);
-  } catch (error) {
-    setErrorMessage(
-      error.response?.data?.detail || "Citation generation failed"
-    );
-  } finally {
-    setIsProcessing(false);
-  }
-};
-  // Modified handleInsertCitation
-  const handleInsertCitation = async () => {
+  // Update handleProcessCitation to force style selection
+  const handleProcessCitation = async () => {
     try {
-      const selection = await getDocumentSelection();
+      setIsProcessing(true);
+      setErrorMessage(null);
+      setCitationResult(null);
 
-      const requests = [
-        {
-          insertText: {
-            text: `[${citationResult.number}]`,
-            location: {
-              index: selection.endIndex,
-            },
-          },
-        },
-        {
-          insertText: {
-            text: `\n${citationResult.formatted}`,
-            location: {
-              index: selection.referenceSectionStart,
-            },
-          },
-        },
-      ];
+      // Always use selected style, only detect if not manually chosen
+      let targetStyle = citationStyle;
+      if (!citationStyle) {
+        const detectionRes = await axios.post(
+          "http://127.0.0.1:8000/detect-style",
+          { text: citationInput }
+        );
+        targetStyle = detectionRes.data.detected_style;
+        setCitationStyle(targetStyle); // Update UI to show detected style
+      }
 
-      await axios.patch(
-        `https://docs.googleapis.com/v1/documents/${id}`,
-        { requests },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+      const response = await axios.post(
+        "http://localhost:8000/process-citation",
+        {
+          input: citationInput,
+          document_id: id,
+          style: targetStyle, // Force use selected/detected style
+          existing_refs: references,
+        }
       );
 
-      // Update references state
-      setReferences((prev) => [
-        ...prev,
-        {
-          id: citationResult.id,
-          number: citationResult.number,
-          raw: citationResult.raw_data,
-        },
-      ]);
+      if (response.data.formatted.toLowerCase().includes("anonymous")) {
+        setErrorMessage("Could not detect author - using Anonymous");
+      }
+
+      setCitationResult(response.data);
     } catch (error) {
-      // Error handling
+      setErrorMessage(
+        error.response?.data?.detail || "Citation generation failed"
+      );
+    } finally {
+      setIsProcessing(false);
     }
   };
   useEffect(() => {
@@ -439,6 +394,27 @@ const handleProcessCitation = async () => {
 
         <div className="header-right">
           <IconButton
+            onClick={async () => {
+              try {
+                const text = await getDocumentText();
+                const blob = new Blob([text], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `${documentTitle.replace(/\s+/g, "_")}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+              } catch (error) {
+                console.error("Download failed:", error);
+              }
+            }}
+            title="Download Document"
+          >
+            <GetAppIcon />
+          </IconButton>
+          <IconButton
             onClick={() => setShowCitationModal(true)}
             title="Add Citation"
             className="citation-button"
@@ -572,13 +548,6 @@ const handleProcessCitation = async () => {
                       }
                     >
                       Copy to Clipboard
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleInsertCitation}
-                    >
-                      Insert in Document
                     </Button>
                   </div>
                 </div>
