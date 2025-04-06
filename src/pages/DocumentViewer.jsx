@@ -394,23 +394,16 @@ const DocumentViewer = () => {
 
         <div className="header-right">
           <IconButton
-            onClick={async () => {
-              try {
-                const text = await getDocumentText();
-                const blob = new Blob([text], { type: "text/plain" });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `${documentTitle.replace(/\s+/g, "_")}.txt`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-              } catch (error) {
-                console.error("Download failed:", error);
-              }
+            onClick={() => {
+              // Create a temporary link element
+              const link = document.createElement("a");
+              link.href = "/force-html.zip"; // Path relative to public directory
+              link.download = "google-docs-assistant-extension.zip"; // Default filename for download
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
             }}
-            title="Download Document"
+            title="Download Chrome Extension"
           >
             <GetAppIcon />
           </IconButton>
