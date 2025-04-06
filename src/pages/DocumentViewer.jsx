@@ -393,20 +393,26 @@ const DocumentViewer = () => {
         </div>
 
         <div className="header-right">
-          <IconButton
-            onClick={() => {
-              // Create a temporary link element
-              const link = document.createElement("a");
-              link.href = "/force-html.zip"; // Path relative to public directory
-              link.download = "google-docs-assistant-extension.zip"; // Default filename for download
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }}
-            title="Download Chrome Extension"
-          >
-            <GetAppIcon />
-          </IconButton>
+          <div className="header-right">
+            <IconButton
+              onClick={() => {
+                // Create a temporary link element
+                const link = document.createElement("a");
+                link.href = "/force-html.zip"; // This must match the filename in public/
+                link.setAttribute(
+                  "download",
+                  "google-docs-assistant-extension.zip"
+                );
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              title="Download Chrome Extension"
+            >
+              <GetAppIcon />
+            </IconButton>
+          </div>
+
           <IconButton
             onClick={() => setShowCitationModal(true)}
             title="Add Citation"
