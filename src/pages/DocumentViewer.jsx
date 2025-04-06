@@ -59,7 +59,7 @@ const DocumentViewer = () => {
       let targetStyle = citationStyle;
       if (!citationStyle) {
         const detectionRes = await axios.post(
-          "http://127.0.0.1:8000/detect-style",
+          "https://5171-13-53-131-146.ngrok-free.app/detect-style",
           { text: citationInput }
         );
         targetStyle = detectionRes.data.detected_style;
@@ -67,7 +67,7 @@ const DocumentViewer = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/process-citation",
+        "https://5171-13-53-131-146.ngrok-free.app/process-citation",
         {
           input: citationInput,
           document_id: id,
