@@ -398,7 +398,7 @@ const DocumentViewer = () => {
               onClick={() => {
                 // Create a temporary link element
                 const link = document.createElement("a");
-                link.href = "/force-html.zip"; // This must match the filename in public/
+                link.href = "/google-docs-extension.zip";
                 link.setAttribute(
                   "download",
                   "google-docs-assistant-extension.zip"
