@@ -72,7 +72,6 @@ const LoginPage = () => {
           </select>
           
           <div className="links">
-            <a href="/help">Help</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
           </div>
